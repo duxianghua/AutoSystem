@@ -185,4 +185,4 @@ def turn_service(request):
         if salt.status == 0:
             #salt_host_key = Host.objects.get(host_name=host).salt_key_name
             data = salt.Salt_CMD(fun=action.lower(),tgt=host,arg=service)
-            return HttpResponse(json.dumps(data['return'][0][salt_host_key]))
+            return HttpResponse(json.dumps(data['return'][0][host]))
