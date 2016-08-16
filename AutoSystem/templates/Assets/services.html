@@ -105,7 +105,7 @@
           $('#action').html(action);
           $('#service').html(service);
           $("#doc").html("执行中....");
-          $.getJSON("/salt/turn_services",{host:host,service:service,action},function(result){
+          $.getJSON("/salt/turn_services",{host:host,service:service,action:action},function(result){
               if (result == true){
                   $("#doc").html(action+" 成功");
               }

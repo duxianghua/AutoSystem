@@ -74,7 +74,7 @@ def modules(request,active):
                 status = u'命令收集完成'
             except Exception,e:
                 status = e
-            return HttpResponse(json.dumps(status))
+        return HttpResponse(json.dumps(status))
     elif active == 'doc':
         id = request.GET.get('id')
         doc = Command.objects.get(pk=id).doc
@@ -178,12 +178,11 @@ def turn_service(request):
     host=request.GET.get('host')
     action='service.'+request.GET.get('action')
     service=request.GET.get('service')
-    print action.lower()
     api_info = Salt_info.objects.filter(Area_name='Staging')
     if api_info:
         api_info=api_info[0]
         salt=Salt_api(api_info.salt_api_url,api_info.salt_api_account,api_info.salt_api_password)
         if salt.status == 0:
-            salt_host_key = Host.objects.get(host_name=host).salt_key_name
-            data = salt.Salt_CMD(fun=action.lower(),tgt=salt_host_key,arg=service)
+            #salt_host_key = Host.objects.get(host_name=host).salt_key_name
+            data = salt.Salt_CMD(fun=action.lower(),tgt=host,arg=service)
             return HttpResponse(json.dumps(data['return'][0][salt_host_key]))
