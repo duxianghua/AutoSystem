@@ -1,0 +1,35 @@
+
+   <table class="table">
+       <br>
+      <tbody>
+         <tr>
+            <td style="width: 300px;height:42px;">主机名称:&nbsp; {{ host.host_name }}</td>
+ 			<td style="width: 300px;height:42px;">内网地址:&nbsp; {{ host.host_ip.host_nip }}</td>
+         </tr>
+         <tr>
+            <td style="width: 300px;height:42px;">物理内存:&nbsp; {{ host.p_mem|filesizeformat }}</td>
+            <td style="width: 300px;height:42px;">交换分区:&nbsp; {{ host.v_mem|filesizeformat }}</td>
+         </tr>
+         <tr>
+            <td style="width: 300px;height:42px;">内核版本:&nbsp; {{ host.kernel_version }}</td>
+            <td style="width: 300px;height:42px;">内核个数:&nbsp; {{ host.cpu_count }}</td>
+         </tr>
+         <tr>
+            <td style="width: 300px;height:42px;">根&nbsp;分&nbsp;区&nbsp;:&nbsp; {{ host.disk_total|filesizeformat }}</td>
+            <td style="width: 300px;height:42px;">系统类型:&nbsp; {{ host.system_type }}</td>
+         </tr>
+         <tr>
+             <td style="width: 400px;height:42px;">CPU型号:&nbsp; {{ host.cpu_models }}</td>
+             <td style="width: 100px;height:42px;"></td>
+         </tr>
+         <tr>
+             <td style="width: 600px;height:42px;">更新时间:&nbsp; {{ host.update_time|date:"Y-m-j H:i:s" }}</td>
+             <td style="width: 100px;height:42px;"></td>
+         </tr>
+         <tr>
+             <td style="width: 600px;height:20px;"></td>
+             <td style="width: 100px;height:20px;"></td>
+         </tr>
+    </table>
+
+

@@ -1,0 +1,164 @@
+{% extends "common/base.html"%}
+{% load staticfiles %}
+{% block css %}
+    <!-- Datatables -->
+    <link href="{% static "vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" %}" rel="stylesheet">
+    <!-- Datatables -->
+{% endblock %}
+{% block content %}
+<div class="right_col" role="main">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                        高级过滤,点击展开或隐藏<span style="color: #DCDCDC;"><small><<<</small></span>
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <div class="col-md-6 col-sm-6 col-xs-6">
+                        <div class="col-md-3 col-sm-3 col-xs-0"></div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <small>选择项目:</small>
+                            <select class="form-control input-sm" id="project_id">
+                                <option value="1">选择项目</option>
+                                {% for project in project_list %}
+                                <option value='{{ project.project_name }}'>{{ project.project_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <div style="height: 10px"></div>
+                            <small>选择服务器:</small>
+                            <select class="form-control" multiple="multiple" size="4" id="hosts_id">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-6">
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <small>选择动作:</small>
+                            <select class="form-control input-sm" id="clients">
+                                <option value="1">Service Manager</option>
+                            </select>
+                            <div style="height: 10px"></div>
+                            <small>自定义过滤条件:</small>
+                            <input id="zdy_re" type="text" class="form-control" placeholder="支持正则表达式" style="width:100%">
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div style="height: 10px"></div>
+                        <div class="col-md-6 col-sm-6 col-xs-6 text-center">
+
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6 text-center">
+                            <button class="btn btn-default" type="button" onclick="get_data()">确定</button>
+                            <button class="btn btn-default" type="button" onclick="postjson()">更新代码</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="x_content" id="table_id">
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="service_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4><span id="action"></span>&nbsp;<span id="service" style="color: red;"></span>&nbsp;Service&nbsp;for&nbsp;<span id="host"></span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </h4>
+            </div>
+            <div class="modal-body" id="doc"></div>
+            <div class="modal-footer">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-info" data-dismiss="modal">关闭</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- /page content -->
+{% endblock %}
+{% block script %}
+    <!-- Datatables -->
+    <script src="{% static "vendors/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "vendors/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+    <script src="{% static "vendors/datatables.net-responsive/js/dataTables.responsive.min.js" %}"></script>
+
+    <script>
+      $(document).ready(function() {
+        $('#datatable-responsive').DataTable();
+          //status()
+      });
+    function selectArow(sObject) {
+        $(sObject).attr("style", "BACKGROUND-COLOR: #e6f0fc");
+        //alert($(sObject).text())
+    }
+      function turn_service(host,service,action){
+          $('#host').html(host);
+          $('#action').html(action);
+          $('#service').html(service);
+          $("#doc").html("执行中....");
+          $.getJSON("/salt/turn_services",{host:host,service:service,action},function(result){
+              if (result == true){
+                  $("#doc").html(action+" 成功");
+              }
+              else{
+                  $("#doc").html(action+" 失败");
+              }
+          });
+          status();
+            //$("#doc").html(htmlobj.responseText);
+        };
+    function status(){
+       $("#datatable-responsive tr").each(function() {
+           //alert($(this).children().eq(1).html());
+           var status = $(this).children().eq(2).text();
+           if (status != "状态"){
+               var host = $(this).children().eq(0).text();
+               var service = $(this).children().eq(1).text();
+               var aaa = $(this)
+               $.getJSON("/salt/get_services_status",{host:host,service:service},function(result){
+                   if (result == true){
+                       aaa.children().eq(2).html("<span style='color: green;'>"+"start"+"</span>");
+                   }
+                   else{
+                       aaa.children().eq(2).html("<span style='color: red;'>"+"stop"+"</span>");
+                   }
+               });
+           }
+
+        });
+    };
+    $('#project_id').change(function(){
+        $('#hosts_id').empty();
+        var project=$(this).val();
+        $.getJSON("/assets/project_host",{ project:project.toString()},function(data){
+            $.each(data, function(host,id) {
+                $('#hosts_id').append("<option value='"+id['id']+"'>"+host+"</option>");
+                });
+            });
+        });
+      function get_data(){
+          var host=$("#hosts_id").val();
+          var re = $("#zdy_re").val();
+          var project=$("#project_id").val();
+            htmlobj= $.ajax({url:"/salt/get_service?project="+project+"&hostid="+host+"&match="+re,async:false});
+            $("#table_id").html(htmlobj.responseText);
+          $('#datatable-responsive').DataTable();
+        };
+    function postjson(){
+        var array=["asdf",'bbb']
+        $.post("/assets/project_host",{ json:array},function(data){
+            alert(data)
+        },"json");
+    };
+    </script>
+    <!-- /Datatables -->
+{% endblock %}

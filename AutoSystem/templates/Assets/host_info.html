@@ -1,0 +1,123 @@
+{% extends "common/base.html"%}
+{% load staticfiles %}
+{% block css %}
+    <!-- Datatables -->
+    <link href="{% static "vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" %}" rel="stylesheet">
+    <!-- Datatables -->
+{% endblock %}
+{% block content %}
+        <!-- page content -->
+        <div class="right_col" role="main">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>主机信息</h2>
+                    <div class="btn-group btn-group-sm pull-right">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_modal" onclick="update_hosts()">主机信息同步</button>
+                    </div>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <p class="text-muted font-13 m-b-30">主机信息详情</p>
+                     <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th>Host name</th>
+                          <th>Area name</th>
+                          <th>Host lip</th>
+                          <th>Group</th>
+                          <th>Status</th>
+                          <th>salt_key_name</th>
+                          <th>operating</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for host in host_list %}
+                        <tr>
+                          <td>{{ host.host_name }}</td>
+                          <td>{{ host.area }}</td>
+                          <td>{{ host.host_nip }}</td>
+                          <td>{{ host.group_id }}</td>
+                          <td><span style="color: green; ">Active</span></td>
+                          <td>{{ host.salt_key_name }}</td>
+                          <td>
+                             <div class="btn-group  btn-group-sm">
+                                <button class="btn btn-default btn-xs" type="button" onclick="get_data('{{ host.host_name }}')" data-toggle="modal" data-target="#host_modal">详细信息</button>
+                            </div>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+        </div>
+            <div id="Layer1" class="tanchuang">
+                <div id="aaa" style="height:340px">
+                </div>
+            <div style="float:right;">
+                <button class="btn btn-default btn-xs" type="button" onclick="close_windows()" style="margin-right:100px"> 关 闭 </button>
+            </div>
+            </div>
+        </div>
+
+<div class="modal fade" id="host_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4>主机 <span id="host"></span> 的详细信息
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </h4>
+            </div>
+            <div class="modal-body" id="doc"></div>
+            <div class="modal-footer">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-info" data-dismiss="modal">关闭</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="update_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4>Salt 模块更新中.....
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </h4>
+            </div>
+            <div class="modal-body" id="update_m"></div>
+            <div class="modal-footer">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-info" data-dismiss="modal">关闭</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- /page content -->
+{% endblock %}
+{% block script %}
+    <!-- Datatables -->
+    <script src="{% static "vendors/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "vendors/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+    <script src="{% static "vendors/datatables.net-responsive/js/dataTables.responsive.min.js" %}"></script>
+
+    <script>
+      $(document).ready(function() {
+        $('#datatable-responsive').DataTable();
+      });
+      function get_data(host){
+            $('#host').html(host);
+            htmlobj= $.ajax({url:"/assets/get_host_info/"+host,async:false});
+            $("#doc").html(htmlobj.responseText);
+        };
+      function update_hosts() {
+          $('#update_modal').empty();
+          $.getJSON("{% url 'SALT:update' %}",{area:'staging'},function(result){$('#update_m').html(result);});
+          return false; //不刷新页面
+      }
+    </script>
+    <!-- /Datatables -->
+{% endblock %}

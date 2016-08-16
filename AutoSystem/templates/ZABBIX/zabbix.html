@@ -1,0 +1,59 @@
+{% extends "common/base.html"%}
+{% load staticfiles %}
+
+{% block content %}
+ <div class="right_col" role="main">
+   <div class="x_panel">
+       <div>
+           <div class="col-md-6"><h3>ZABBIX 监控</h3></div>
+           <div class="col-md-6">
+               <select class="btn btn-success" id="host" style="float: right;margin-top:12px">
+                   {% for host in host_list %}
+                   <option value="{{ host.hostid }}">{{ host.host }}</option>
+                    {% endfor %}
+               </select>
+               <select class="btn btn-success" id="graph" style="float: right;margin-top:12px">
+
+                   {% for graph in graph_list %}
+                   <option value="{{ graph.graphid }}">{{ graph.name|truncatechars:30 }}</option>
+                    {% endfor %}
+               </select>
+                    <select class="form-control" id="period" onchange="GetGraph()">
+                        <option value="3600">1小时</option>
+                        <option value="7200">2小时</option>
+                        <option value="86400">一天</option>
+                        <option value="604800">一周</option>
+                        <option value="2592000">一个月</option>
+                    </select>
+           </div>
+       </div>
+       <div class="col-xs-12 col-md-12 col-lg-12">
+           <img id="img" src="http://10.1.10.187/zabbix/chart2.php?graphid=523&period=3600" style="width:100%">
+       </div>
+   </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+     $(document).ready( function () {
+         GetGraph()
+         setInterval('GetGraph()',5000);
+     });
+    $(function(){
+        $("#host").val("{{ hostid }}");
+    });
+    $('#host').change(function(){
+        var hostid=$(this).val();
+        if (!hostid){alert("请选择主机！")}
+        else{window.location.href="graph?hostid="+hostid;}
+    });
+    function GetGraph(){
+        var period=$('#period').val();
+        var graphid=$('#graph').val();
+        if(!graphid){alert("请选择一个图像对象！")}
+        else{
+            $('#img').attr("src","http://10.1.10.187/zabbix/chart2.php?graphid="+graphid+"&period="+period);
+        }
+    }
+</script>
+{% endblock %}

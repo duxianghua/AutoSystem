@@ -1,0 +1,105 @@
+{% extends "common/base.html"%}
+{% load staticfiles %}
+{% block css %}
+    <!-- Datatables -->
+    <link href="{% static "vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" %}" rel="stylesheet">
+    <!-- Datatables -->
+    <!-- 表单 -->
+    <link href="{% static "vendors/google-code-prettify/bin/prettify.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/select2/dist/css/select2.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/switchery/dist/switchery.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/starrr/dist/starrr.css" %}" rel="stylesheet">
+    <!-- 表单 -->
+
+{% endblock %}
+{% block content %}
+<div class="right_col" role="main">
+    <div class="x_panel">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="title" id="title">
+
+                <div class="col-md-6"><h3>Salt认证管理</h3></div>
+                <div class="col-md-6">
+                 <select class="btn btn-success" id="idc" style="float: right;margin-top:12px">
+                    <option selected="selected">请选择区域</option>
+                    <option value="1">SCR8</option>
+                    <option value="2">GTR8</option>
+                    <option value="salt_key/staging">Staging</option>
+                    <option value="">TEST</option>
+                 </select>
+            </div>
+                </div>
+     <div class="x_content">
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title"><h2>Accepted Keys <small>已经添加成功的key id</small></h2><div class="clearfix"></div>
+                </div>
+                <div class="x_content"><table id="datatable1" class="display">
+                    <thead>
+                    <tr>
+                        <th>KEY ID</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for key in minions %}
+                    <tr>
+                        <td>{{ key }}</td>
+                        <td><button type="button" class="btn btn-danger btn-xs">Delete</button></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title"><h2>Unaccepted Keys </h2><div class="clearfix"></div>
+                </div>
+                <div class="x_content"><table id="datatable-Unaccepted" class="display">
+                    <thead>
+                    <tr>
+                        <th>KEY ID</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for key in minions_pre %}
+                    <tr>
+                        <td>{{ key }}</td>
+                        <td><button type="button" class="btn btn-danger btn-xs">Delete</button></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+
+</div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <!-- Datatables -->
+    <script src="{% static "vendors/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "vendors/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+    <!-- Datatables -->
+
+    <script>
+     $(document).ready( function () {
+      $('table.display').dataTable();
+     } );
+    $('#idc').change(function(){
+
+        var idc=$(this).val();
+        window.location.href="/salt/"+idc;
+    });
+    </script>
+{% endblock %}

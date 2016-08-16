@@ -1,0 +1,323 @@
+{% extends "common/base.html"%}
+{% load staticfiles %}
+{% block css %}
+    <!-- Datatables -->
+    <link href="{% static "vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" %}" rel="stylesheet">
+    <!-- Datatables -->
+    <!-- 表单 -->
+    <link href="{% static "vendors/google-code-prettify/bin/prettify.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/select2/dist/css/select2.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/switchery/dist/switchery.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/starrr/dist/starrr.css" %}" rel="stylesheet">
+    <!-- 表单 -->
+
+{% endblock %}
+{% block content %}
+<div class="right_col" role="main">
+    <div class="x_panel pull-bottom">
+        <div class="x_panel">
+            <div class="raw">
+                <div class="col-md-3 col-sm-3 col-lg-3 col-xs-3">
+                    <h2>SALT 命令执行</h2>
+                </div>
+                <div class="col-md-5 col-sm-5 col-lg-5 col-xs-5">
+                    <div class="text-center">
+                        <span id="xianshi" class="glyphicon" style="color: rgb(255, 0, 13); font-size: 16px;"></span>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-lg-4 col-xs-4">
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#help_modal" onclick="cmd_help()">命令帮助</button>
+                        <div class="btn-group">
+                            <button id="area" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">选择执行区域<span class="caret"></span></button>
+                            <ul class="dropdown-menu" role="menu">
+                                {%for area in area_list%}
+                                <li><a onclick="test('{{ area.area_name }}')">{{ area.area_name }}</a></li>
+                                <li class="divider"></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="x_panel" id="asdf">
+        <div class="raw">
+            <div class="col-md-3 col-sm-3 col-lg-3 col-xs-12" id="select_host" disabled="disabled" >
+                    <small>分组信息栏:</small>
+                    <select class="form-control" multiple="multiple" size="10" id="groups" disabled="disabled">
+                        {% for group in group_list %}
+                        <option value="{{ group.group_name }}">{{ group.group_name|title }}</option>
+                        {% endfor %}
+                        </select>
+                        <small>主机信息栏:</small>
+                     <select class="form-control" multiple="multiple" size="18" id="hosts" disabled="disabled"></select>
+            </div>
+            <div class="col-md-9 col-sm-9 col-lg-9 col-xs-12">
+            <div class="raw">
+                <div class="col-md-3 col-sm-3 col-lg-3 col-xs-6">
+                    <small>Client Interfaces:</small>
+                    <select class="form-control input-sm" id="clients">
+                        <option value="1">Local Client</option>
+                        <option value="2">Local_async Client</option>
+                        <option value="3">Wheel Client</option>
+                        <option value="4">Wheel_async Client</option>
+                        <option value="5">Runner Client</option>
+                        <option value="6">Runner_async Client</option>
+                    </select>
+                </div>
+                <div class="col-md-3 col-sm-3 col-lg-3 col-xs-6">
+                <small>Select models:</small>
+                <select class="form-control input-sm" id="modules">
+                    <option value="1">请先选择client接口</option>
+                </select>
+            </div>
+                <div class="col-md-3 col-sm-3 col-lg-3 col-xs-6">
+                <small>Models parameter:</small>
+                <select class="form-control input-sm" id="cmd_list">
+                    <option value="1"><<--请先选择模块</option>
+                </select>
+            </div>
+                <div class="col-md-3 col-sm-3 col-lg-3 col-xs-6">
+                    <small>Expr_form:</small>
+                    <select class="form-control input-sm">
+                        <option value="1">glob</option>
+                        <option value="2">list</option>
+                        <option value="3">nodegroup</option>
+                        <option value="4">grain</option>
+                    </select>
+                </div>
+            </div>
+                <br>
+                <br>
+                <br>
+            <div class="raw">
+                <div class="col-md-10 col-sm-10 col-lg-10 col-xs-12">
+                    <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        <input id="cmd" type="text" class="form-control" placeholder="输入linux命令" style="width:100%">
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-2 col-lg-2 col-xs-12">
+                    <button class="btn btn-default" onclick="run_cmd()" data-loading-text="运行..." id="run" style="width:100%" disabled="disabled">运行</button>
+                </div>
+            </div>
+            <br>
+            <div class="raw">
+                <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                    <div class="btn-group" style="z-index:0;position:absolute;width:97%">
+                        <button class="btn btn-default btn-xs pull-right" onclick="clean()">clean</button>
+                    </div>
+                    <textarea class="form-control" id="result" style="min-height:445px;z-index:-1;" readonly="readonly">[root@salt-master ~]#</textarea>
+                </div>
+            </div>
+        </div>
+        </div>
+            </div>
+    </div>
+</div>
+<div class="modal fade" id="help_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4>Salt命令<code>"<span id="module_help"></span>"</code>的帮助信息
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </h4>
+            </div>
+            <div class="modal-body" id="doc"></div>
+            <div class="modal-footer">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-info" data-dismiss="modal">关闭</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+    <script>
+        $(document).ready(function() {
+            clientid=$("#clients").val();
+            $.getJSON("{% url 'SALT:modules' "get"  %}",{clientid:clientid},function(data){
+                $('#modules').empty();
+                $.each(data, function(id) {
+                    $('#modules').append("<option value='"+data[id]['name']+"'>"+data[id]['name']+"</option>");
+                });
+                module=$("#modules").val();
+                $.getJSON("{% url 'SALT:modules' "get"  %}",{clientid:clientid,module:module},function(data){
+                    $('#cmd_list').empty();
+                    $.each(data, function(id) {
+                        $('#cmd_list').append("<option value='"+data[id]['id']+"'>"+data[id]['cmd']+"</option>");
+                        });
+                    });
+                });
+            });
+        function hosts(){
+            var x = document.getElementById("multi-host");
+            var y = "";
+            for (i = 0; i < x.length; i++)
+            {
+                y += x.options[i].value;
+                if ( i+1 < x.length ){
+                    y += ",";
+                }
+            }
+            return y;
+        };
+        function run_cmd(){
+            var host=$("#hosts").val();
+            var cmd1=$('#cmd').val();
+            var client=$("#clients").val();
+            var module_id=$("#cmd_list").val();
+            var module_name=$("#cmd_list").find("option:selected").text();
+            if (client=='1' || client=='2') {
+                if (host!=null && typeof(host)!="undefined" && host!=0) {
+                    execution_cmd('result','run',client,module_id,host,module_name,cmd1)
+                }
+             else {alert("host is "+host);
+                }
+             }
+            if (client=='3' || client=='4' || client=='5' || client=='6') {
+                runner_or_wheel('result','run',client,module_id,module_name)
+            }
+
+
+        };
+        function clean(){
+            $("#result").val("[root@salt-master ~]#");
+        }
+        function execution_cmd(displayid,buttonid,client,module_id,host,module_name,cmd){
+            var display_id=document.getElementById(displayid);
+            var button_id=document.getElementById(buttonid);
+            var old=$(display_id).val();
+            $(button_id).button('loading');
+            if (cmd !=null){
+                $(display_id).val(old+"salt  \""+host+"\"  "+module_name);}
+            else{
+                $(display_id).val(old+"salt  \""+host+"\"  "+module_name+"  \""+cmd+"\"");}
+
+            $.getJSON("{% url 'SALT:execution' %}",{ client:client,module:module_id,key:host.toString(),cmd:cmd },function(data){
+                $.each(data, function(host,value) {
+                    var old=$(display_id).val();
+                    if (typeof value == 'object'){
+                        $(display_id).val(old+"\n"+host+":");
+                        $.each(value, function(key,val) {
+                            var old=$(display_id).val();
+                            $(display_id).val(old+"\n\t"+key+"\n\t\t"+val.toString().replace(/\n/g,"\n\t\t"));
+                        });
+                    }else{
+                        $(display_id).val(old+"\n"+host+":"+"\n\t\t"+value.toString().replace(/\n/g,"\n\t\t")+"\n");
+                    }
+
+                });
+                $(display_id).val($(display_id).val()+"\n[root@salt-master ~]#");
+                $(button_id).button('reset');
+            });
+        }
+        function runner_or_wheel(displayid,buttonid,client,module_id,module_name){
+            var display_id=document.getElementById(displayid);
+            var button_id=document.getElementById(buttonid);
+            var old=$(display_id).val();
+            $(button_id).button('loading');
+            if (client=='2' || client=='3'){
+                $(display_id).val(old+"salt-run  "+module_name);
+            }
+            else{
+                $(display_id).val(old+"salt-wheel  "+module_name);
+            }
+            $.getJSON("{% url 'SALT:modules' "get"  %}",{ client:client,module:module_id },function(data){
+                $.each(data, function(host,value) {
+                    var old=$(display_id).val();
+                    $(display_id).val(old+"\n"+host+":"+"\n"+value+"\n");
+                });
+                $(display_id).val($(display_id).val()+"\n[root@salt-master ~]#");
+                $(button_id).button('reset');
+            });
+        }
+        function test(area){
+            $("#area").text("选择区域:"+area);
+            $("#xianshi").html("SALT 登录中...");
+            $('<span class="caret"></span>').appendTo("#area");
+            $.getJSON("{% url 'SALT:select_area' %}",{area:area},function(rev) {
+                if (rev['status'] == 0){
+                    $("#xianshi").html(rev['data']);
+                    $('#run').attr("disabled",false);
+                    $('#hosts').attr("disabled",false);
+                    $('#groups').attr("disabled",false);
+                }
+                else{
+                    $("#xianshi").html(rev['data']);
+                    $('#run').attr("disabled",true);
+                    $('#hosts').attr("disabled",true);
+                    $('#groups').attr("disabled",true);
+                }
+            });
+        }
+        $('#clients').change(function(){
+            var client=$(this).val();
+            if (client=='3' || client=='4' || client=='5' || client=='6'){
+                $('#hosts').attr("disabled",true);
+                $('#groups').attr("disabled",true);
+                $('#cmd').attr("disabled",true);
+            }
+            if (client=='1' || client=='2'){
+                $('#hosts').attr("disabled",false);
+                $('#groups').attr("disabled",false);
+                $('#cmd').attr("disabled",false);
+            }
+
+            clientid=$(this).val();
+            $.getJSON("{% url 'SALT:modules' "get"  %}",{clientid:clientid},function(data){
+                $('#modules').empty();
+                $.each(data, function(id) {
+                    $('#modules').append("<option value='"+data[id]['name']+"'>"+data[id]['name']+"</option>");
+                });
+            });
+        });
+        $('#modules').change(function(){
+            module=$(this).val();
+            $.getJSON("{% url 'SALT:modules' "get"  %}",{clientid:clientid,module:module},function(data){
+                $('#cmd_list').empty();
+                $.each(data, function(id) {
+                    $('#cmd_list').append("<option value='"+data[id]['id']+"'>"+data[id]['cmd']+"</option>");
+                });
+            });
+        });
+        $('#groups').change(function(){
+            $('#hosts').empty();
+            var group=$(this).val();
+            $.getJSON("/assets/get_group_hosts",{ group:group.toString()},function(data){
+                $.each(data, function(id) {
+                    var host_name=data[id]['host_name'];
+                    var key_name=data[id]['salt_key_name'];
+                    $('#hosts').append("<option value='"+key_name+"'>"+host_name+"</option>");
+                });
+            });
+        });
+        $('#hosts').dblclick(function(){
+            var $items = $.grep($('#hosts option:selected').clone(), function(v){
+    	        // if the item does not exist return true which includes it in the new array
+    	        return $('#multi-host').find("option[value='" + $(v).val() + "']").length == 0;
+    	    });
+                $('#multi-host').append($items);
+        });
+        $('#multi-host').dblclick(function(){
+            var $items = $.grep($('#hosts option:selected').clone(), function(v){
+    	        // if the item does not exist return true which includes it in the new array
+    	        return $('#multi-host').find("option[value='" + $(v).val() + "']").length == 0;
+    	    });
+                return !$('#multi-host option:selected').remove();
+        });
+        function cmd_help(name,cmd) {
+            var name=$('#cmd_list').find("option:selected").text();
+            var cmd=$('#cmd_list').val();
+          $('#module_help').html(name);
+          $.getJSON("{% url 'SALT:modules' "doc" %}",{id:cmd},function(result){$('#doc').html(result);});
+          return false; //不刷新页面
+        }
+    </script>
+{% endblock %}

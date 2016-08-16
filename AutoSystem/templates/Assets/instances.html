@@ -1,0 +1,118 @@
+{% extends "common/base.html"%}
+{% load staticfiles %}
+{% block css %}
+    <!-- Datatables -->
+    <link href="{% static "vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" %}" rel="stylesheet">
+    <!-- Datatables -->
+    <!-- 表单 -->
+    <link href="{% static "vendors/google-code-prettify/bin/prettify.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/select2/dist/css/select2.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/switchery/dist/switchery.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/starrr/dist/starrr.css" %}" rel="stylesheet">
+    <!-- 表单 -->
+{% endblock %}
+{% block content %}
+<!-- page content -->
+<div class="right_col" role="main">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+         <div class="x_panel">
+             <div class="x_title">
+                 <h2>云主机信息</h2>
+                 <div class="btn-group btn-group-sm pull-right">
+                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_modal" onclick="update_modules()">EC2 信息同步</button>
+                 </div>
+                 <div class="clearfix"></div>
+             </div>
+             <div class="x_content">
+                    <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th>实例标签</th>
+                          <th>实例类型</th>
+                          <th>实例ID</th>
+                          <th>所属区域</th>
+                          <th>内网IP</th>
+                          <th>公网IP</th>
+                          <th>实例状态</th>
+                          <th>创建时间</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for instance in instances_list %}
+                        <tr>
+                          <td>{{ instance.instance_tags }}</td>
+                          <td>{{ instance.instance_type }}</td>
+                          <td>{{ instance.instance_id }}</td>
+                          <td>{{ instance.instance_create_time|date:"Y-m-j H:i:s" }}</td>
+                          <td>{{ instance.instance_private_ip }}</td>
+                            <td>{{ instance.instance_public_ip }}</td>
+                          <td>{{ instance.instance_state }}</td>
+                          <td>{{ instance.instance_area }}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+         </div>
+    </div>
+</div>
+<div class="modal fade" id="cmd_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4>Salt命令<code>"<span id="module"></span>"</code>的帮助信息
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </h4>
+            </div>
+            <div class="modal-body" id="doc"></div>
+            <div class="modal-footer">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-info" data-dismiss="modal">关闭</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="update_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4>Salt 模块更新中.....
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </h4>
+            </div>
+            <div class="modal-body" id="update_m"></div>
+            <div class="modal-footer">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-info" data-dismiss="modal">关闭</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /page content -->
+{% endblock %}
+{% block script %}
+    <!-- Datatables -->
+    <script src="{% static "vendors/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "vendors/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+    <script src="{% static "vendors/datatables.net-responsive/js/dataTables.responsive.min.js" %}"></script>
+
+    <!-- Datatables -->
+    <script>
+      $(document).ready(function() {
+        $('#datatable-responsive').DataTable();
+      });
+      function update_modules() {
+          $('#update_m').empty();
+          $.getJSON("{% url 'CMD:instances' "update" %}",{area:'staging'},function(result){$('#update_m').html(result);});
+          return false; //不刷新页面
+      }
+    </script>
+{% endblock %}
