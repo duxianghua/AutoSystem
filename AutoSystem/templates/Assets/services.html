@@ -54,7 +54,7 @@
                         <div class="col-md-6 col-sm-6 col-xs-6 text-center">
                             <button class="btn btn-default" type="button" onclick="get_data()" disabled="disabled" id="show_services">查看服务</button>
                             <a id="show_log_a" href="" target="_blank"><button id="show_log_b" class="btn btn-default" disabled="disabled">查看日志</button></a>
-                            <button class="btn btn-default" type="button" disabled="disabled">更新代码</button>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#code_update_modal" disabled="disabled" id="code_update">代码更新</button>
                         </div>
                     </div>
                 </div>
@@ -72,17 +72,20 @@
     </div>
 </div>
 
-<div class="modal fade" id="service_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="code_update_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h4><span id="action"></span>&nbsp;<span id="service" style="color: red;"></span>&nbsp;Service&nbsp;for&nbsp;<span id="host"></span>
+                <h4>项目代码更新 &nbsp; <small style="color: red;display: none;"id="zxz">执行中......</small>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </h4>
+
             </div>
-            <div class="modal-body" id="doc"></div>
+            <textarea class="form-control" id="result" style="min-height:445px;z-index:-1;" readonly="readonly"></textarea>
             <div class="modal-footer">
                 <div class="btn-group pull-right">
+                    <a class="btn btn-info" onclick="code_manger('pull')">代码拉取</a>
+                    <a class="btn btn-info" onclick="code_manger('go')">代码同步</a>
                     <a class="btn btn-info" data-dismiss="modal">关闭</a>
                 </div>
             </div>
@@ -121,6 +124,7 @@
           });
           status();
         };
+
     $('#project_id').change(function(){
         $('#hosts_id').empty();
         var project=$(this).val();
@@ -129,10 +133,23 @@
                 $('#show_log_a').attr('href',result['log'])
                 $('#show_log_b').attr('disabled',false)
                 $('#show_services').attr('disabled',false)
+                $('#code_update').attr('disabled',false)
                 $('#hosts_id').append("<option value='"+result['hosts'][i]['id']+"'>"+result['hosts'][i]['name']+"</option>");
+                $('#result').val("项目名称:"+project+'\n')
                 });
             });
         });
+    function  code_manger(action){
+        $("#zxz").show();
+        var project=$('#project_id').val();
+        var old = $('#result').val();
+        $('#result').val(old+'-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+'+'\n');
+        $.getJSON("/salt/code",{ project:project.toString(),action:action},function(data){
+             var old = $('#result').val();
+             $('#result').val(old+data+'\n');
+            $("#zxz").hide();
+        });
+    };
       function get_data(){
           var host=$("#hosts_id").val();
           if (host != null){

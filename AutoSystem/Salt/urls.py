@@ -12,4 +12,5 @@ urlpatterns = [
 	url(r'^get_service$',get_service),
 	url(r'^get_services_status',get_service_status),
 	url(r'^turn_service',turn_service),
+	url(r'^code$',code_manager),
 ]

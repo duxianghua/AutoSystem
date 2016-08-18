@@ -185,3 +185,20 @@ def turn_service(request):
             #salt_host_key = Host.objects.get(host_name=host).salt_key_name
             data = salt.Salt_CMD(fun=action.lower(),tgt=host,arg=service)
             return HttpResponse(json.dumps(data['return'][0][host]))
+
+def code_manager(request):
+    action = request.GET.get('action')
+    project_name = request.GET.get('project')
+    cmd_data = project.objects.get(project_name=project_name).code_update_cmd
+    if cmd_data:
+        cmd = json.loads(cmd_data)[action]
+        api_info = Salt_info.objects.filter(Area_name='Staging')[0]
+        salt=Salt_api(api_info.salt_api_url,api_info.salt_api_account,api_info.salt_api_password)
+        if action == 'pull':
+            arg="su -c '"+cmd+"' deploy"
+            data = salt.Salt_CMD(fun='cmd.run',tgt='admin-staging.stargt.com.my',arg=arg)
+        else:
+            data = salt.Salt_CMD(fun='cmd.run',tgt='admin-staging.stargt.com.my',arg=cmd)
+        return HttpResponse(json.dumps(data['return'][0]['admin-staging.stargt.com.my']))
+    else:
+        return HttpResponse(json.dumps('你没请我吃饭,所以此项目暂时无法进行代码管理.'))
