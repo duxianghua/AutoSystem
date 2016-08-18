@@ -53,16 +53,21 @@
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-6 text-center">
                             <button class="btn btn-default" type="button" onclick="get_data()">确定</button>
-                            <button class="btn btn-default" type="button" onclick="postjson()">更新代码</button>
+                            <button class="btn btn-default" type="button" disabled="disabled">更新代码</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            </div>
         <div class="clearfix"></div>
+        <div class="x_panel">
         <div class="x_content" id="table_id">
 
         </div>
+            </div>
     </div>
 </div>
 
@@ -114,28 +119,7 @@
               }
           });
           status();
-            //$("#doc").html(htmlobj.responseText);
         };
-    function status(){
-       $("#datatable-responsive tr").each(function() {
-           //alert($(this).children().eq(1).html());
-           var status = $(this).children().eq(2).text();
-           if (status != "状态"){
-               var host = $(this).children().eq(0).text();
-               var service = $(this).children().eq(1).text();
-               var aaa = $(this)
-               $.getJSON("/salt/get_services_status",{host:host,service:service},function(result){
-                   if (result == true){
-                       aaa.children().eq(2).html("<span style='color: green;'>"+"start"+"</span>");
-                   }
-                   else{
-                       aaa.children().eq(2).html("<span style='color: red;'>"+"stop"+"</span>");
-                   }
-               });
-           }
-
-        });
-    };
     $('#project_id').change(function(){
         $('#hosts_id').empty();
         var project=$(this).val();
@@ -147,18 +131,17 @@
         });
       function get_data(){
           var host=$("#hosts_id").val();
-          var re = $("#zdy_re").val();
-          var project=$("#project_id").val();
-            htmlobj= $.ajax({url:"/salt/get_service?project="+project+"&hostid="+host+"&match="+re,async:false});
-            $("#table_id").html(htmlobj.responseText);
-          $('#datatable-responsive').DataTable();
-        };
-    function postjson(){
-        var array=["asdf",'bbb']
-        $.post("/assets/project_host",{ json:array},function(data){
-            alert(data)
-        },"json");
-    };
+          if (host != null){
+              var re = $("#zdy_re").val();
+              var project=$("#project_id").val();
+              htmlobj= $.ajax({url:"/salt/get_service?project="+project+"&hostid="+host+"&match="+re,async:false});
+              $("#table_id").html(htmlobj.responseText);
+              $('#datatable-responsive').DataTable();
+            }
+          else{
+              $("#table_id").html('<span style="color: red;">请先选择服务器</span>');
+            }
+          };
     </script>
     <!-- /Datatables -->
 {% endblock %}

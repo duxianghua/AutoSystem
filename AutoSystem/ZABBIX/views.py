@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import render
 from ZABBIX.ZabbixAPI import *
 import ConfigParser
 
 # Create your views here.
-@login_required
+
 def get_zabbix_host(request):
     cf = ConfigParser.ConfigParser()
     cf.read("AutoSystem/config.ini")
@@ -18,7 +19,7 @@ def get_zabbix_host(request):
         error=str(e)
     return render(request, 'ZABBIX/zabbix.html', locals())
 
-@login_required
+
 def get_graph(request):
     hostid=request.GET.get('hostid','')
     try:
@@ -32,4 +33,3 @@ def get_graph(request):
     except Exception as e:
         error=str(e)
     return render(request, 'ZABBIX/zabbix.html', locals())
-

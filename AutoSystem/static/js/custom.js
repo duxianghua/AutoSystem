@@ -279,3 +279,79 @@ if (typeof NProgress != 'undefined') {
     jQuery.fn[sr] = function(fn){  return fn ? this.bind('resize', debounce(fn)) : this.trigger(sr); };
 
 })(jQuery,'smartresize');
+
+function test(table_id) {
+    var trList = $("#"+table_id).children("tr")
+    var count = 0
+    for (var i = 0; i < trList.length; i++) {
+        var tdArr = trList.eq(i).find("td");
+        var a = tdArr.eq(0).find("input").is(":checked");
+        if ( a ) {
+            count = count + 1
+            tdArr.attr("style", "BACKGROUND-COLOR: #e6f0fc");
+        }else{
+            tdArr.attr("style", "BACKGROUND-COLOR: none");
+        }
+    }
+    $("#select_count").text(count)
+};
+
+function checkall(selfid){
+    if ( $("#"+selfid).is(":checked") ){
+        //alert('1')
+        $("[name^='service']:checkbox").prop("checked", "checked");
+    } else {
+        //alert('2')
+        $("[name^='service']:checkbox").removeAttr("checked");
+    }
+    test("services_list");
+};
+
+function plcz_services(table_id,action) {
+    var trList = $("#"+table_id).children("tr")
+    var count = $("#select_count").text()
+    var aaa = confirm('你确定要'+action+' '+count+'个服务吗？')
+    var action_count = 0
+    if (aaa){
+        for (var i = 0; i < trList.length; i++) {
+            var tdArr = trList.eq(i).find("td");
+            var a = tdArr.eq(0).find("input").is(":checked");
+            if ( a ) {
+                var host = tdArr.eq(1).text();
+                var service = tdArr.eq(2).text();
+                manager_service(host,service,action,tdArr);
+                get_service_status(host,service,tdArr);
+            }
+        }
+    }
+};
+
+function manager_service(host,service,action,obj){
+    obj.eq(3).html("<span style='color: red;'>"+"状态更新中..."+"</span>");
+    $.getJSON("/salt/turn_services",{host:host,service:service,action:action},function(result){
+    });
+};
+
+
+function get_service_status(host,service,obj){
+    setTimeout(
+        function(){$.getJSON("/salt/get_services_status",{host:host,service:service},function(result){
+        if (result == true){
+            obj.eq(3).html("<span style='color: green;'>"+"start"+"</span>");
+        } else{
+            obj.eq(3).html("<span style='color: red;'>"+"stop"+"</span>");
+        }
+    });}
+    ,5000)
+};
+
+function status(){
+    $("#services_list tr").each(function() {
+        var status = $(this).children().eq(3).text();
+        var tdArr = $(this).children();
+        var host = $(this).children().eq(1).text();
+        var service = $(this).children().eq(2).text();
+        tdArr.eq(3).html("<span style='color: red;'>"+"状态更新中..."+"</span>");
+        get_service_status(host,service,tdArr);
+    });
+};

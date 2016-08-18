@@ -128,7 +128,6 @@ def update_host_info(request):
     obj.update_area_host()
     return HttpResponse("asdfsfs")
 
-@login_required
 def get_service(request):
     hostid=request.GET.get('hostid')
     match=request.GET.get('match')
@@ -163,7 +162,7 @@ def get_service(request):
         project_list = project.objects.all()
         return render(request, 'Assets/services.html', locals())
 
-@login_required
+
 def get_service_status(request):
     service=request.GET.get('service')
     host=request.GET.get('host')
@@ -173,7 +172,7 @@ def get_service_status(request):
         data = salt.Salt_CMD(fun='service.status',tgt=host,arg=service)
         return HttpResponse(json.dumps(data['return'][0][host]))
 
-@login_required
+
 def turn_service(request):
     host=request.GET.get('host')
     action='service.'+request.GET.get('action')

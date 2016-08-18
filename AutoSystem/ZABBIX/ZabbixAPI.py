@@ -2,11 +2,14 @@
 import ConfigParser
 import json
 import urllib2
+import os
+
 
 class ZabbixAPI:
     def __init__(self):
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         cf = ConfigParser.ConfigParser()
-        cf.read("AutoSystem/config.ini")
+        cf.read(BASE_DIR + "/AutoSystem/config.ini")
         self.__url = cf.get("zabbix_server","url")
         self.__user= cf.get("zabbix_server","user")
         self.__password = cf.get("zabbix_server","password")

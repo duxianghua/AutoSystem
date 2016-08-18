@@ -107,7 +107,6 @@ def aws_instances(request,action):
         instances_list = AWS_INSTANCES.objects.all()
         return render(request,'Assets/instances.html',locals())
 
-@login_required
 def get_project_hosts(request):
     project = request.GET.get('project')
     if project:

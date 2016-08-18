@@ -1,30 +1,41 @@
-<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+<div class="col-md-12 col-sm-12 col-xs-12 ">
+    <button class="btn btn-default btn-xs" type="button" onclick="plcz_services('services_list','start')">启动服务</button>
+    <button class="btn btn-default btn-xs" type="button" onclick="plcz_services('services_list','stop')">停止服务</button>
+    <button class="btn btn-default btn-xs" type="button" onclick="plcz_services('services_list','restart')">重启服务</button>
+        &nbsp;<span id="select_count">0</span>&nbsp;<small>选择</small>
+</div>
+
+<table id="datatable1-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                 <thead>
                     <tr>
+                        <th>
+                            <input type="checkbox" id="all_hosts" name="all_hosts" value="1" onclick="checkall('all_hosts');">
+                        </th>
                         <th>服务器名称</th>
                         <th>服务名称</th>
                         <th>状态</th>
-                        <th>操作</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="services_list">
            {% for data in service_list %}
                 {% for host,services in data.items %}
                     {% for service in services %}
                     <tr>
+                        <td>
+                            <input type="checkbox" id="serviceid" name="service" value="{{ service }}" onclick="test('services_list')">
+                        </td>
                         <td>{{ host }}</td>
                         <td onclick="selectArow(this)">{{ service }}</td>
                         <td ondblclick="status()">双击更新...</td>
-                        <td>
-                            <div class="btn-group  btn-group-xs"">
-                                <button class="btn btn-default btn-xs" type="button" onclick="turn_service('{{ host }}','{{ service }}','Start')" data-toggle="modal" data-target="#service_modal">启动服务</button>
-                                <button class="btn btn-default btn-xs" type="button" onclick="turn_service('{{ host }}','{{ service }}','Stop')" data-toggle="modal" data-target="#service_modal">停止服务</button>
-                                <button class="btn btn-default btn-xs" type="button" onclick="turn_service('{{ host }}','{{ service }}','Restart')" data-toggle="modal" data-target="#service_modal">重启服务</button>
-                            </div>
-                          </td>
                     </tr>
                     {% endfor %}
                 {% endfor %}
            {% endfor %}
-                </tbody>
+           </tbody>
 </table>
+<div class="col-md-12 col-sm-12 col-xs-12">
+    &nbsp;<span id="select_count">0</span>&nbsp;<small>选择</small>
+    <button class="btn btn-default btn-xs" type="button" onclick="plcz_services('services_list','start')">启动服务</button>
+    <button class="btn btn-default btn-xs" type="button" onclick="plcz_services('services_list','stop')">停止服务</button>
+    <button class="btn btn-default btn-xs" type="button" onclick="plcz_services('services_list','restart')">重启服务</button>
+</div>
