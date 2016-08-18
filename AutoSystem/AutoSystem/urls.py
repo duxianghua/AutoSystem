@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url,include
+from django.conf.urls import handler404, handler500
 from django.contrib import admin
 from AUTH.views import index
 
@@ -28,3 +29,6 @@ urlpatterns = [
 	url(r'^zabbix/',include('ZABBIX.urls',namespace='ZABBIX')),
 	url(r'^admin/', admin.site.urls),
 ]
+
+handler500 = "AutoSystem.views.page_500"
+handler404 = "AutoSystem.views.page_404"
