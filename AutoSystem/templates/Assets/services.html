@@ -52,7 +52,8 @@
 
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-6 text-center">
-                            <button class="btn btn-default" type="button" onclick="get_data()">确定</button>
+                            <button class="btn btn-default" type="button" onclick="get_data()" disabled="disabled" id="show_services">查看服务</button>
+                            <a id="show_log_a" href="" target="_blank"><button id="show_log_b" class="btn btn-default" disabled="disabled">查看日志</button></a>
                             <button class="btn btn-default" type="button" disabled="disabled">更新代码</button>
                         </div>
                     </div>
@@ -123,9 +124,12 @@
     $('#project_id').change(function(){
         $('#hosts_id').empty();
         var project=$(this).val();
-        $.getJSON("/assets/project_host",{ project:project.toString()},function(data){
-            $.each(data, function(host,id) {
-                $('#hosts_id').append("<option value='"+id['id']+"'>"+host+"</option>");
+        $.getJSON("/assets/project_host",{ project:project.toString()},function(result){
+            $.each(result['hosts'], function(i) {
+                $('#show_log_a').attr('href',result['log'])
+                $('#show_log_b').attr('disabled',false)
+                $('#show_services').attr('disabled',false)
+                $('#hosts_id').append("<option value='"+result['hosts'][i]['id']+"'>"+result['hosts'][i]['name']+"</option>");
                 });
             });
         });

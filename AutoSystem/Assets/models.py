@@ -61,6 +61,7 @@ class project(models.Model):
 	project_name = models.CharField(max_length=100,unique="True")
 	sevice_filter_re = models.CharField(max_length=100)
 	project_desc = models.CharField(max_length=200,null="Ture",blank='Ture')
+	project_logs_path = models.CharField(max_length=1000,null="Ture",blank='Ture')
 	def __str__(self):
 		return self.project_name
 

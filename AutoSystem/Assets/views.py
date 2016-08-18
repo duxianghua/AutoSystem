@@ -108,14 +108,17 @@ def aws_instances(request,action):
         return render(request,'Assets/instances.html',locals())
 
 def get_project_hosts(request):
-    project = request.GET.get('project')
-    if project:
-        hosts = {}
-        data = project_host.objects.filter(project=project)
+    project_name = request.GET.get('project')
+    if project_name:
+        l = []
+        project_log = project.objects.get(project_name=project_name)
+        data = project_host.objects.filter(project=project_name)
         for i in data:
-            hosts[i.host.host_name]={"id":i.host.id}
-            #hosts.append({i.host.host_name})
-        print hosts
-        return HttpResponse(json.dumps(hosts))
+            hosts = {}
+            hosts['name'] = i.host.host_name
+            hosts['id']= i.host.id
+            l.append(hosts)
+        back_data = {'log':project_log.project_logs_path,'hosts':l}
+        return HttpResponse(json.dumps(back_data))
     else:
         return HttpResponse(json.dumps(u"未选择提交项目"))
