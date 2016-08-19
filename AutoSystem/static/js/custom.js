@@ -294,6 +294,15 @@ function test(table_id) {
         }
     }
     $("#select_count").text(count)
+    if ( count > 0 ){
+        $("#btn_start").attr('disabled',false);
+        $("#btn_stop").attr('disabled',false);
+        $("#btn_restart").attr('disabled',false);
+    }else{
+        $("#btn_start").attr('disabled',true);
+        $("#btn_stop").attr('disabled',true);
+        $("#btn_restart").attr('disabled',true);
+    }
 };
 
 function checkall(selfid){

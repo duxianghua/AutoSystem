@@ -30,7 +30,7 @@
                                 {% endfor %}
                             </select>
                             <div style="height: 10px"></div>
-                            <small>选择服务器:</small>
+                            <small>选择服务器<可多选>:</small>
                             <select class="form-control" multiple="multiple" size="4" id="hosts_id">
                             </select>
                         </div>
@@ -62,13 +62,13 @@
         </div>
         <div class="col-md-12 col-sm-12 col-xs-12">
 
-            </div>
-        <div class="clearfix"></div>
-        <div class="x_panel">
-        <div class="x_content" id="table_id">
-
         </div>
+        <div class="clearfix"></div>
+        <div class="x_panel" id="table_window" style="display: none">
+            <div class="x_content" id="table_id">
+
             </div>
+        </div>
     </div>
 </div>
 
@@ -158,9 +158,10 @@
               htmlobj= $.ajax({url:"/salt/get_service?project="+project+"&hostid="+host+"&match="+re,async:false});
               $("#table_id").html(htmlobj.responseText);
               $('#datatable-responsive').DataTable();
+              $("#table_window").show();
             }
           else{
-              $("#table_id").html('<span style="color: red;">请先选择服务器</span>');
+              alert("请先选择服务器")
             }
           };
     </script>
