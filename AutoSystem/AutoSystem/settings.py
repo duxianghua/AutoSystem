@@ -27,7 +27,7 @@ SECRET_KEY = '@)!7i$@+of)a8@3)!#96i*=jl69@uhj+a&hzdpn4d#8evc9!6y'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Application definition
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'Assets',
     'AUTH',
     'ZABBIX',
+    'CMDB',
 ]
 
 MIDDLEWARE_CLASSES = [

@@ -1,0 +1,204 @@
+{% extends "common/base.html"%}
+{% load staticfiles %}
+{% block css %}
+    <!-- Datatables -->
+    <link href="{% static "vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" %}" rel="stylesheet">
+    <!-- Datatables -->
+    <!-- 表单 -->
+    <link href="{% static "vendors/google-code-prettify/bin/prettify.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/select2/dist/css/select2.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/switchery/dist/switchery.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/starrr/dist/starrr.css" %}" rel="stylesheet">
+    <!-- 表单 -->
+{% endblock %}
+{% block content %}
+        <!-- page content -->
+<div class="right_col" role="main">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <div class="col-md-2 col-sm-2 col-xs-12">
+                    <h2>区域信息管理</h2>
+                </div>
+                <div class="col-md-10 col-sm-10 col-xs-12">
+                    <div class="btn-group btn-group-sm pull-right">
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#add_area_modal">添加</button>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>区域名称</th>
+                        <th>AWS 账号</th>
+                        <th>实例数量</th>
+                        <th>描述信息</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for area in area_list %}
+                    <tr>
+                        <td>{{ area.area_name }}</td>
+                        <td>{{ area.area_account }}</td>
+                        {% for i,val in area_count.items %}
+                        {% if i == area.area_name  %}
+                        <td>{{ val }}</td>
+                        {% endif %}
+                        {% endfor %}
+                        <td>{{ area.area_description }}</td>
+                        <td>
+                            <button class="btn btn-default btn-xs" data-toggle="modal" data-target="#edit_area_modal" onclick="edit_area('{% url "CMDB:area" %}','{{ area.pk }}','AreaInfoPage')"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
+                            <button class="btn btn-default btn-danger btn-xs"><span class="glyphicon glyphicon-remove-circle"></span> 删除</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal fade" id="add_area_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header text-center">
+                            <h4>添加AWS区域信息
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                             <form role="form" action="{% url 'CMDB:area' %}" method="post" id="add_area" onsubmit="return add_form_data('add_area','area','close');">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4 col-sm-4 col-xs-4">
+                                            <label class="pull-right">区域名称:</label>
+                                        </div>
+                                        <div class="col-md-3 col-sm-4 col-xs-4">
+                                            <input type="text" class="form-control" id="area_name" name="area_name" placeholder="区域名称" style="width: 200px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4 col-sm-4 col-xs-4">
+                                            <label class="pull-right">AWS账号:</label>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <input id="area_account" name="area_account" placeholder="可选项" style="width: 200px;" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4 col-sm-4 col-xs-4">
+                                            <label class="pull-right">AWS密码:</label>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <input id="area_password" name="area_password" type="password" placeholder="可选项" style="width: 200px;" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4 col-sm-4 col-xs-4">
+                                            <label class="pull-right">API ACCEAA KEY:</label>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <input id="area_access_key" name="area_access_key" placeholder="可选项" style="width: 200px;" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4 col-sm-4 col-xs-4">
+                                            <label class="pull-right">API PRIVATE KEY:</label>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <input id="area_private_key" name="area_private_key" placeholder="可选项" style="width: 200px;" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4 col-sm-4 col-xs-4">
+                                            <label class="pull-right">AWS region:</label>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <input id="area_region" name="area_region" placeholder="可选项" style="width: 200px;" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                 <br>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4 col-sm-4 col-xs-4">
+                                            <label class="pull-right">描述:</label>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <textarea id="area_desc" name="area_desc" placeholder="可选项"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4 col-sm-4 col-xs-4">
+                                            <label for="host_name" class="pull-right"> </label>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <button type="submit" class="btn btn-primary" value="submit">添加</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal" id="close">取消</button>
+                                        </div>
+                                    </div>
+                                </div>
+                             </form>
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="edit_area_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header text-center">
+                            <h4>添加AWS区域信息
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </h4>
+                        </div>
+                        <div class="modal-body" id="AreaInfoPage">
+
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- /page content -->
+{% endblock %}
+{% block script %}
+    <!-- Datatables -->
+    <script src="{% static "vendors/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "vendors/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+    <script src="{% static "vendors/datatables.net-responsive/js/dataTables.responsive.min.js" %}"></script>
+    <script src="{% static "js/jquery.form.js" %}"></script>
+    <!-- Datatables -->
+    <script>
+      $(document).ready(function() {
+        $('#datatable-responsive').DataTable();
+      });
+    </script>
+{% endblock %}

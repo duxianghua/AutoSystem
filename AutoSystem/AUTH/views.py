@@ -14,6 +14,7 @@ def login(request):
     user = auth.authenticate(username=username, password=password)
     if user is not None and user.is_active:
         auth.login(request, user)
+        request.session.set_expiry(86400)
         if path and path != '/auth/':
             return redirect(path)
         else:

@@ -1,0 +1,77 @@
+<form role="form" action="{% url 'CMDB:app_category' %}" method="post" id="add_app_cate" onsubmit="return add_form_data('add_app_cate','hostid_lift','close');">
+                    {% csrf_token %}
+                    <input type="hidden" name="id" value="{{ data.id }}" />
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <label class="pull-right">分类名称:</label>
+                            </div>
+                            <div class="col-md-3 col-sm-4 col-xs-4">
+                                <input type="text" class="form-control" id="app_cate_name" name="app_cate_name" placeholder="分类名称" style="width: 200px;" value="{{ data.app_category_name }}">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <label class="pull-right">应用描述:</label>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <textarea id="app_cate_desc" name="app_cate_desc">{{ data.app_category_desc }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <label for="host_name" class="pull-right">应用分组:</label>
+                            </div>
+                            <div class="col-md-5 col-sm-8 col-xs-8">
+                                <table id="datatable">
+                                	<tbody>
+                                		<tr>
+                                			<td>已添加主机</td>
+                                			<td></td>
+                                			<td>未添加主机</td>
+                                		</tr>
+                                		<tr>
+                                			<td>
+                                				<select class="form-control" id="hostid_lift" name="hostid_lift" multiple="multiple" size="8" style="width: 200px;">
+                                                    {% for host in ExistHosts %}
+                                                    <option value="{{ host.host_id_id }}">{{ host.host_id.host_name }}</option>
+                                                    {% endfor %}
+                                				</select>
+                                			</td>
+                                			<td style="text-align:center;vertical-align:middle;">
+                                                <button type="button" class="btn btn-default btn-xs" onclick="moveListBoxSelectedItem('hostid_right','hostid_lift')"><<<</button>
+                                                <br>
+                                                <button type="button" class="btn btn-default btn-xs" onclick="moveListBoxSelectedItem('hostid_lift','hostid_right')">>>></button>
+                                			</td>
+                                			<td>
+                                				<select class="form-control" id="hostid_right" name="hostid_right" multiple="multiple" size="8" style="width: 200px;">
+                                                    {% for host in hosts_list %}
+                                                        <option value="{{ host.pk }}">{{ host.host_name }}</option>
+                                                    {% endfor %}
+                                				</select>
+                                			</td>
+                                		</tr>
+                                	</tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <label for="host_name" class="pull-right"> </label>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <button type="submit" class="btn btn-primary" value="submit">保存</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="close">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                 </form>

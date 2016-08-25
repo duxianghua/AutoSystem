@@ -1,0 +1,139 @@
+{% extends "common/base.html"%}
+{% load staticfiles %}
+{% block css %}
+    <!-- Datatables -->
+    <link href="{% static "vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" %}" rel="stylesheet">
+    <!-- Datatables -->
+    <!-- 表单 -->
+    <link href="{% static "vendors/google-code-prettify/bin/prettify.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/select2/dist/css/select2.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/switchery/dist/switchery.min.css" %}" rel="stylesheet">
+    <link href="{% static "vendors/starrr/dist/starrr.css" %}" rel="stylesheet">
+    <!-- 表单 -->
+{% endblock %}
+{% block content %}
+<!-- page content -->
+<div class="right_col" role="main">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+         <div class="x_panel">
+             <div class="x_title">
+                 <div class="col-md-2 col-sm-2 col-xs-12">
+                    <h2>主机管理</h2>
+                 </div>
+                 <div class="col-md-6 col-sm-6 col-xs-12"></div>
+                 <div class="col-md-4 col-sm-4 col-xs-12 pull-right">
+                    <div class="col-md-5 col-sm-5 col-xs-5">
+                        <select class="form-control input-sm" id="area_select">
+                            {% for area in area_list %}
+                            <option value="{{ area.pk }}">{{ area.area_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-7 col-sm-7 col-xs-7">
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-default" onclick="window.location.href='/cmdb/hosts/add'">添加主机</button>
+                            <button type="button" class="btn btn-default" onclick="import_ec2_hosts('area_select')">EC2 导入</button>
+                        </div>
+                    </div>
+                 </div>
+                 <div class="clearfix"></div>
+             </div>
+             <div class="x_content" id="instance_table">
+                    <table id="datatable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th>主机名称</th>
+                          <th>所属区域</th>
+                          <th>IP地址</th>
+                          <th>是否可用</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for host in hosts_list %}
+                        <tr>
+                          <td>{{ host.host_name }}</td>
+                          <td>{{ host.host_area }}</td>
+                          <td>{{ host.host_ip }}</td>
+                            {% if host.host_available == 1 %}
+                          <td><a style="color: green">可用</a></td>
+                            {% else %}
+                            <td><a style="color: red">停用</a></td>
+                            {% endif%}
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+         </div>
+    </div>
+</div>
+
+<div class="modal fade" id="update_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4>EC2 实例信息更新中.....
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </h4>
+            </div>
+            <div class="modal-body" id="update_ec2"></div>
+            <div class="modal-footer">
+                <div class="btn-group pull-right">
+                    <a class="btn btn-info" data-dismiss="modal">关闭</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /page content -->
+{% endblock %}
+{% block script %}
+    <!-- Datatables -->
+    <script src="{% static "vendors/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "vendors/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+    <script src="{% static "vendors/datatables.net-responsive/js/dataTables.responsive.min.js" %}"></script>
+
+    <!-- Datatables -->
+    <script>
+      $(document).ready(function() {
+        $('#datatable').DataTable();
+      });
+      function update_ec2_instances() {
+          $('#update_ec2').empty();
+          var area_id=$("#area_select").val();
+          obj1=$("#instance_table")
+          obj2=$("#datatable")
+          $.getJSON("{% url 'CMDB:ec2' %}",{action:"update",areaid:area_id},function(result){
+              if (result['status'] == 'ok'){
+                  $("#update_ec2").html("同步成功\n"+result['value']+"个instance信息")
+                  ec2_instances(area_id,obj1,obj2)
+                  $("#datatable").DataTable();
+              }else{
+                  $("#update_ec2").html("同步失败\n"+"错误原因:"+result['value'])
+              }
+          });
+          return True; //不刷新页面
+      }
+    $("#area_select").change(function(){
+        var area_id=$(this).val();
+        ec2_instances(area_id,'instance_table','datatable')
+    });
+    function ec2_instances(area_id,obj1,obj2){
+        $.get("{% url 'CMDB:hosts' %}",{action:'select',areaid:area_id},function(result){
+            $("#"+obj1).html(result);
+            $('#'+obj2).DataTable();
+        });
+    };
+    function import_ec2_hosts(demon_id){
+        var area_id = document.getElementById(demon_id);
+        $.get("{% url 'CMDB:import_hosts' %}",{action:'import',areaid:$(area_id).val().toString()},function(result){
+            alert(result)
+            window.location.href='/cmdb/hosts'
+        });
+    }
+    </script>
+{% endblock %}

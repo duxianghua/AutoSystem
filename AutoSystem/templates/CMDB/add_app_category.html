@@ -1,0 +1,36 @@
+ <form role="form" action="{% url 'CMDB:app_category' %}" method="post" id="add_app_cate" onsubmit="return add_form_data('add_app_cate','app_cate_right','close');">
+        {% csrf_token %}
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-4 col-sm-4 col-xs-4">
+                    <label class="pull-right">应用分类名称:</label>
+                </div>
+                <div class="col-md-3 col-sm-4 col-xs-4">
+                    <input type="text" class="form-control" id="app_cate_name" name="app_cate_name" placeholder="分类名称" style="width: 200px;">
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-4 col-sm-4 col-xs-4">
+                    <label class="pull-right">应用描述:</label>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                    <textarea id="app_cate_desc" name="app_cate_desc"></textarea>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-4 col-sm-4 col-xs-4">
+                    <label for="host_name" class="pull-right"> </label>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                    <button type="submit" class="btn btn-primary" value="submit">添加</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="close">取消</button>
+                </div>
+            </div>
+        </div>
+ </form>

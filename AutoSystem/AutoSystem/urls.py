@@ -19,6 +19,7 @@ from django.conf.urls import handler404, handler500
 from django.contrib import admin
 from AUTH.views import index
 
+
 urlpatterns = [
 	#默认首页
 	url(r'^$',index,name='index'),
@@ -28,6 +29,7 @@ urlpatterns = [
 	url(r'^assets/', include('Assets.urls',namespace='CMD')),
 	url(r'^zabbix/',include('ZABBIX.urls',namespace='ZABBIX')),
 	url(r'^admin/', admin.site.urls),
+	url(r'cmdb/',include('CMDB.urls',namespace='CMDB')),
 ]
 
 handler500 = "AutoSystem.views.page_500"

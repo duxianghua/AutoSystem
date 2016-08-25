@@ -45,7 +45,7 @@
                       </div>
                       <div class="profile_info">
                           <span>欢迎</span>
-                          <h2>guest</h2>
+                          <h2>{{ user }}</h2>
                       </div>
                   </div>
                   <!-- /menu profile quick info -->
@@ -57,17 +57,15 @@
                       <div class="menu_section">
                           <h3>XXOO</h3>
                           <ul class="nav side-menu">
-                              <li><a><i class="fa fa-home"></i> 资产统计 <span class="fa fa-chevron-down"></span></a>
+                              <li><a><i class="fa fa-home"></i> 资产管理 <span class="fa fa-chevron-down"></span></a>
                                   <ul class="nav child_menu">
-                                      <li><a href="/assets/area">AWS 帐号管理</a>
+                                      <li><a href="{% url 'CMDB:ec2' %}">EC2实例</a>
                                       </li>
-                                      <li><a href="/assets/instances/">EC2 管理</a>
+                                      <li><a href="{% url 'CMDB:hosts' %}">主机列表</a>
                                       </li>
-                                      <li><a href="/assets/host_info/staging">Staging</a>
+                                      <li><a href="{% url 'CMDB:app_category' %}">应用分类</a>
                                       </li>
-                                      <li><a href="/assets/host_info/gtr8">GTR8</a>
-                                      </li>
-                                      <li><a href="/assets/host_info/scr8">SCR8</a>
+                                      <li><a href="{% url 'CMDB:area' %}">AWS 区域管理</a>
                                       </li>
                                   </ul>
                               </li>
@@ -143,7 +141,7 @@
                               <li class="">
                                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
                                      aria-expanded="false">
-                                      <img src="{% static "images/img.jpg" %}" alt="">Guest
+                                      <img src="{% static "images/img.jpg" %}" alt="">{{ user }}
                                       <span class=" fa fa-angle-down"></span>
                                   </a>
                                   <ul class="dropdown-menu dropdown-usermenu pull-right">

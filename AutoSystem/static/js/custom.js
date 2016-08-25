@@ -364,3 +364,127 @@ function status(){
         get_service_status(host,service,tdArr);
     });
 };
+
+function moveListBoxSelectedItem(select1_id,select2_id){
+    var select1 = document.getElementById(select1_id);
+    var select2 = document.getElementById(select2_id);
+     $(select1).find("option:selected").each(function(){
+        $("<option value='" + $(this).val() + "'>" + $(this).text() + "</option>").appendTo(select2);
+         var values = $(select2).val();
+         if (values == null){
+             $(select2).val([$(this).val()]).prop("selected",true);
+         }else {
+             var a = values+","+$(this).val()
+             var test = a.toString().split(",");
+                if (test != null){
+                    $(select2).val(test);
+            }
+         }
+        $(this).remove();
+    });
+};
+
+function add_form_data(form_id,select_id,close_id){
+    var formid = document.getElementById(form_id);
+    var closeid = document.getElementById(close_id);
+    var selectid = document.getElementById(select_id);
+    $(closeid).click()
+    var values = ""
+     $(selectid).find("option").each(function() {
+         values = values+','+$(this).val()
+     });
+    var test = values.toString().split(",");
+    if (test != null){
+        $(selectid).val(test);
+    }
+    alert(values)
+    $(formid).ajaxSubmit(function(message){
+        var obj = JSON.parse(message);
+        if (obj['status'] == 'ok' ){
+            //$(closeid).click();
+            window.location.reload();
+            alert("添加成功");
+        }else{
+            alert("添加失败\n"+obj['val'])
+        }
+    });
+    return false;
+};
+
+function add_host(form_id,id_list){
+    for (i in id_list){
+        var dome_id = document.getElementById(id_list[i]);
+        if (!$(dome_id).val()){
+            //$(dome_id).css("border-color","red")
+            if (id_list[i] == 'app_cate_lift' ){
+                alert("app category is null")
+                return false;
+            }else{
+                alert(id_list[i]+" is null")
+                return false;
+            }
+        }
+    }
+    var formid = document.getElementById(form_id);
+    $(formid).ajaxSubmit(function(message){
+        var obj = JSON.parse(message);
+        if (obj['status'] == 'ok' ){
+            //window.location.href="/assets/host_info/staging";
+            alert("成功");
+        }else{
+            alert("失败\n"+obj['val'])
+        }
+    });
+    return false;
+};
+
+function getpage(url,dictparameter,displayID) {
+    var displayobj = document.getElementById(displayID);
+    $(displayID).html(name);
+    $.get(url,dictparameter,function(result){$(displayobj).html(result);});
+    return false; //不刷新页面
+};
+
+function edit_area(url,ID,displayID) {
+    var displayobj = document.getElementById(displayID);
+    $.get(url,{action:'edit',id:ID},function(rev){
+        $(displayobj).html(rev);
+    });
+    return false; //不刷新页面
+};
+
+function DelItem(url,itemId){
+    var csrftoken = getCookie('csrftoken');
+    $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+    });
+    $.post(url,{action:'delete',id:itemId},function(obj){
+        alert(obj)
+        window.location.reload();
+    });
+};
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}

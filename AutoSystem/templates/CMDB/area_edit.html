@@ -1,0 +1,90 @@
+<form role="form" action="{% url 'CMDB:area' %}" method="post" id="add_area" onsubmit="return add_form_data('add_area','area','close');">{% csrf_token %}
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <label class="pull-right">区域名称:</label>
+            </div>
+            <div class="col-md-3 col-sm-4 col-xs-4">
+                <input type="text" class="form-control" id="area_name" name="area_name" placeholder="区域名称" style="width: 200px;" value="{{ AreaInfo.area_name }}">
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <label class="pull-right">AWS账号:</label>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <input id="area_account" name="area_account" placeholder="可选项" style="width: 200px;" class="form-control" value="{{ AreaInfo.area_account }}">
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <label class="pull-right">AWS密码:</label>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <input id="area_password" name="area_password" type="password" placeholder="可选项" style="width: 200px;" class="form-control" value="{{ AreaInfo.area_password }}">
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <label class="pull-right">API ACCEAA KEY:</label>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <input id="area_access_key" name="area_access_key" placeholder="可选项" style="width: 200px;" class="form-control" value="{{ AreaInfo.area_access_key }}">
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <label class="pull-right">API PRIVATE KEY:</label>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <input id="area_private_key" name="area_private_key" placeholder="可选项" style="width: 200px;" class="form-control" value="{{ AreaInfo.area_private_key }}">
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <label class="pull-right">AWS region:</label>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <input id="area_region" name="area_region" placeholder="可选项" style="width: 200px;" class="form-control" value="{{ AreaInfo.area_region }}">
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <label class="pull-right">描述:</label>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <textarea id="area_desc" name="area_desc" placeholder="可选项" value="{{ AreaInfo.area_desc }}"></textarea>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <label for="host_name" class="pull-right"> </label>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <button type="submit" class="btn btn-primary" value="submit">保存</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="close">取消</button>
+            </div>
+        </div>
+    </div>
+</form>
