@@ -391,21 +391,20 @@ function add_form_data(form_id,select_id,close_id){
     $(closeid).click()
     var values = ""
      $(selectid).find("option").each(function() {
-         values = values+','+$(this).val()
+         values = values+$(this).val()+','
      });
     var test = values.toString().split(",");
     if (test != null){
         $(selectid).val(test);
     }
-    alert(values)
     $(formid).ajaxSubmit(function(message){
         var obj = JSON.parse(message);
         if (obj['status'] == 'ok' ){
             //$(closeid).click();
             window.location.reload();
-            alert("添加成功");
+            alert("成功");
         }else{
-            alert("添加失败\n"+obj['val'])
+            alert("失败\n"+obj['val'])
         }
     });
     return false;

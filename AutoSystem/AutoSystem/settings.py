@@ -132,4 +132,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = ( BASE_DIR + '/static',)
+#STATICFILES_DIRS = ("/Users/duxianghua/Desktop/AutoSystem/AutoSystem/static",)
 LOGIN_URL = '/auth/login/'

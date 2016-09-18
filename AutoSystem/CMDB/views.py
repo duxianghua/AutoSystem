@@ -117,7 +117,7 @@ def app_category_views(request):
             return render(request,'CMDB/add_app_category.html')
         if action == 'edit':
             CateId = request.GET.get('id')
-            hosts_list = hosts.objects.exclude(id__in=app_cate_hosts.objects.filter(app_category_id=CateId).values('host_id'))
+            hosts_list = hosts.objects.exclude(id__in=app_cate_hosts.objects.filter().values('host_id'))
             data = app_category.objects.get(pk=CateId)
             ExistHosts =data.app_cate_hosts_set.all()
             return render(request,'CMDB/AppCate_edit.html',locals())
@@ -134,7 +134,6 @@ def app_category_views(request):
         id = request.POST.get('id',)
         action = request.POST.get('action',)
         hostid = request.POST.getlist('hostid_lift',)
-        print "asdf"
         if action == 'delete':
             try:
                 app_category.objects.get(pk=id).delete()
@@ -150,8 +149,6 @@ def app_category_views(request):
             if hostid:
                 NewHostID = map(int,hostid)
                 OldHostID = [i.host_id_id for i in app_cate_hosts.objects.filter(app_category_id=id)]
-                print NewHostID
-                print OldHostID
                 try:
                     app_cate_hosts.objects.filter(host_id__in=set(OldHostID)-set(NewHostID)).delete()
                 except Exception,e:

@@ -1,0 +1,7 @@
+<form role="form" action="/assets/git" method="post" id="add_host">{% csrf_token %}
+    {{ form.as_table }}
+    <div class="help-block">Existing branch name, tag, or commit SHA</div>
+    <br>
+    <input class="btn btn-default btn-success" type="submit" value="确定" />
+    <input class="pull-right btn btn-default" type="button" value="取消" data-dismiss="modal" aria-label="Close"/>
+</form>

@@ -1,0 +1,6 @@
+<form role="form" action="add_tag" method="post" id="add_host">{% csrf_token %}
+    {{ form.as_table }}
+    <br>
+    <input class="btn btn-default btn-success" type="submit" value="确定" />
+    <input class="pull-right btn btn-default" type="button" value="取消" data-dismiss="modal" aria-label="Close"/>
+</form>

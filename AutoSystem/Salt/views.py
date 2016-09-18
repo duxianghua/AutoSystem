@@ -195,7 +195,7 @@ def code_manager(request):
         api_info = Salt_info.objects.filter(Area_name='Staging')[0]
         salt=Salt_api(api_info.salt_api_url,api_info.salt_api_account,api_info.salt_api_password)
         if action == 'pull':
-            arg="su -c '"+cmd+"' deploy"
+            arg="su -c '%s' deploy" %cmd
             data = salt.Salt_CMD(fun='cmd.run',tgt='admin-staging.stargt.com.my',arg=arg)
         else:
             data = salt.Salt_CMD(fun='cmd.run',tgt='admin-staging.stargt.com.my',arg=cmd)
